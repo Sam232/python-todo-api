@@ -79,3 +79,89 @@ def find_todo_by_name():
 
     except Exception as exp:
         return JsonResponse.failed_resp(msg="Error occurred while finding a todo.\nError: {}".format(str(exp)))
+
+
+# update user todo_
+@api.route("/update-todo", methods=["PUT"])
+@api_request.json
+def update_user_todo():
+    try:
+        request_param = request.args.to_dict()
+        request_body = json.loads(request.data.decode("utf-8"))
+        todo = {}
+
+        if "id" in request_param:
+            todo["id"] = request_param["id"]
+
+            if len(request_body) > 0:
+                if "name" in request_body:
+                    todo["name"] = request_body["name"]
+                if "status" in request_body:
+                    todo["status"] = request_body["status"]
+                if "end_date" in request_body:
+                    todo["end_date"] = request_body["end_date"]
+                if "description" in request_body:
+                    todo["description"] = request_body["description"]
+
+                result = ManageTodo.update_todo(todo)
+
+                if "error" in result:
+                    return JsonResponse.failed_resp(msg=result["error"])
+
+                else:
+                    if result["todo_updated"] is True:
+                        return JsonResponse.success_resp(msg=result["msg"])
+                    else:
+                        return JsonResponse.failed_resp(msg=result["msg"])
+
+            else:
+                return JsonResponse.failed_resp(msg="Nothing to update")
+
+        else:
+            return JsonResponse.failed_resp(msg="Todo id parameter is required")
+
+    except Exception as exp:
+        return JsonResponse.failed_resp(msg="Error occurred while trying to update todo.\nError: {}".format(str(exp)))
+
+
+# delete todo_
+@api.route("/delete-todo", methods=["DELETE"])
+def delete_user_todo():
+    request_param = request.args.to_dict()
+
+    if "id" in request_param:
+        todo_id = request_param["id"]
+        result = ManageTodo.delete_todo(todo_id)
+
+        if "error" in result:
+            return JsonResponse.failed_resp(msg=result["error"])
+
+        else:
+            if result["todo_deleted"] is True:
+                return JsonResponse.success_resp(msg=result["msg"])
+            else:
+                return JsonResponse.failed_resp(msg=result["msg"])
+
+    else:
+        return JsonResponse.failed_resp(msg="Todo id parameter is required")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

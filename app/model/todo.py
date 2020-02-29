@@ -19,7 +19,7 @@ class Todo(db.Document):
     status = db.StringField(default=Status.STARTED.value, choices=Status.values())
     start_date = db.DateTimeField(default=datetime.date.today().strftime("%Y-%m-%d"))
     end_date = db.DateTimeField(required=True)
-    modified_at = db.DateTimeField(null=True, default=None, onupdate=datetime.date)
+    modified_at = db.DateTimeField(null=True, default=None)
     description = db.StringField(null=True, default=None)
 
     def to_dict(self):
